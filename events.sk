@@ -19,7 +19,7 @@ every tick:
         set {_target} to raytrace({_p}) 
 
         if {_target} is set: 
-            set metadata value "released" of {_p} to false
+            set metadata value "released" of {_p} to true
             set {_event-values::entity} to {_target}
 
             if metadata value "hovering" of {_p} != true: # so it only calls once 
