@@ -6,7 +6,7 @@ command /togglecursor:
         else:
             set {cursor_mode::%player%} to false
 
-
+# wonky code
 function cursor(p: player):
 
     set {_p}'s gamemode to spectator

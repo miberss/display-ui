@@ -1,12 +1,12 @@
 # Use structs to store data about the ui items
 # Store the structs in a list for the UI
-
+on load:
+    set {-slots_per_row} to 9
+    set {-item_spacing} to 1.3
 
 struct ui:
     id: string
     location: location
-    row_size: int
-    rows: int 
 
 
 struct ui_item:  
@@ -15,20 +15,19 @@ struct ui_item:
     item_display: entity
     item: item
 
-function ui(id: string, loc: location, row_size: int, rows: int):
+# Initialize a UI
+function ui(id: string, loc: location):
     set {_loc} to middle of {_loc}
 
     set {_ui} to a ui struct
     set {_ui}'s id field to {_id}
     set {_ui}'s location field to {_loc}
-    set {_ui}'s row_size field to {_row_size}
-    set {_ui}'s rows field to {_rows} # Implement later
 
     set {ui::%{_id}%} to {_ui}
 
-
+# Add an item to a UI
 function add_item(i: item, id: string):
-    set {_loc} to get_next_loc({_id}, 0.3)
+    set {_loc} to get_next_loc({_id})
     spawn an interaction at {_loc}:
         set {_hitbox} to entity
 
@@ -39,8 +38,8 @@ function add_item(i: item, id: string):
         make {_d} ride {_hitbox}
 
     # Test configuration functions
-    hover_size({_hitbox}, 1.5)
-    hover_glow({_hitbox}, true)
+    hover_size({_d}, 1.5)
+    hover_glow({_d}, true)
 
     # Store the information in a struct within the UI
     set {_struct} to a ui_item struct
@@ -54,11 +53,9 @@ function add_item(i: item, id: string):
 
 
 # Get the next slot location
-function get_next_loc(id: string, spacing: number=0.3) :: location:
+function get_next_loc(id: string) :: location:
     set {_ui} to {ui::%{_id}%}
     set {_loc} to {_ui}'s location field
-    set {_row_size} to {_ui}'s row_size field
-    set {_spacing} to 1 + {_spacing}
 
     set {_current_slot} to size of {ui::%{_id}%::items::*}
 
@@ -67,9 +64,9 @@ function get_next_loc(id: string, spacing: number=0.3) :: location:
 
     loop {_current_slot} times:
         set {_i} to loop-iteration
-        add {_spacing} to {_x}
-        if mod({_i}, {_row_size}) = 0:
-            subtract {_spacing} from {_y}
+        add {-item_spacing} to {_x}
+        if mod({_i}, {-slots_per_row}) = 0:
+            subtract {-item_spacing} from {_y}
             set {_x} to 0 
    
     return {_loc} ~ vector({_x}, {_y}, 0)
