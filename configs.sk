@@ -1,0 +1,13 @@
+# configuration functions
+
+# If the display should glow or not when someone hovers 
+function hover_glow(d: entity, boolean: boolean=true):
+    set boolean tag "ui;hover;glow" of custom nbt compound of {_d} to {_boolean}
+
+
+# The size of the display after the someone hovers
+function hover_size(d: entity, size: number=1.3):
+    set float tag "ui;hover;size" of custom nbt compound of {_d} to {_size}
+
+
+

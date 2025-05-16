@@ -1,0 +1,61 @@
+custom event "ui release":
+    pattern: ui release
+    event-values: entity
+    check:
+        continue
+
+custom event "ui hover":
+    pattern: ui hover
+    event-values: entity
+    check:
+        continue
+
+
+every tick:
+    loop all players:  
+        set {_p} to loop-player
+        set {_target} to raytrace({_p}) 
+
+        if {_target} is set:
+            set metadata value "released" of {_p} to false
+            set {_event-values::entity} to {_target}
+
+            if metadata value "hovering" of {_p} != true: # so it only calls once 
+                hover_logic({_target})
+                call a new custom event "ui hover" with event-values {_event-values::*} 
+            set metadata value "hovering" of {_p} to true
+
+        else if {_target} is not set: # player isn't hovering over the previous thing = released
+            set metadata value "hovering" of {_p} to false
+            if metadata value "released" of {_p} != true: # so it only calls once
+
+                release_logic({_target}) # {_target} won't work yet
+                call a new custom event "ui release" with event-values {_event-values::*} 
+            set metadata value "released" of {_p} to true
+
+
+function get_display(hitbox: entity) :: entity:
+
+
+
+
+function hover_logic(d: entity):
+    set {_nbt} to custom nbt compound of {_d}
+    if boolean tag "ui;hover;glow" of {_nbt} = true:
+        set glowing of {_d} to true
+
+    if float tag "ui;hover;size" of {_nbt} is set:
+        set display scale of {_d} to vector({_size},{_size},{_size})
+
+
+function release_logic(d: entity):
+    set glowing of {_d} to false
+    set display scale of {_d} to vector(1,1,1) # for now
+
+
+# test
+on ui hover:
+    broadcast "hover"
+
+on ui release:
+    broadcast "release"
